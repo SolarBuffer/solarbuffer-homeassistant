@@ -133,5 +133,10 @@
         "name": "Hub software"
       }
     }
+  },
+  "exceptions": {
+    "regulation_is_on": {
+      "message": "The manual output only works when automatic control is switched off. Turn off the Regulation switch first."
+    }
   }
 }

@@ -133,5 +133,10 @@
         "name": "Hub-software"
       }
     }
+  },
+  "exceptions": {
+    "regulation_is_on": {
+      "message": "De handmatige stand werkt alleen als de automatische besturing uit staat. Zet de schakelaar Regeling eerst uit."
+    }
   }
 }

@@ -63,7 +63,8 @@ bruikbaar in het energiedashboard.
 | Boost | knop, per SolarBuffer | |
 | Accustand: automatisch, handmatig of uit | keuzelijst | Zendure gekoppeld |
 | Accurichting: laden of ontladen | keuzelijst | Zendure gekoppeld |
-| Handmatig accuvermogen | getal | Zendure gekoppeld |
+| Handmatige stand per SolarBuffer | invulveld | automatische besturing uit |
+| Handmatig accuvermogen | invulveld | Zendure gekoppeld |
 
 ## Aandachtspunten
 
@@ -75,6 +76,12 @@ de router voorkomt dat.
 De integratie valt dan terug op de omschakelaars van de webinterface. Alles
 werkt, maar tegelijk bedienen vanuit Home Assistant en vanaf de hub kan dan een
 onverwachte uitkomst geven. Werk de hub bij om dat te voorkomen.
+
+**De handmatige stand is een invulveld, geen weergave.** Hij houdt vast wat
+je hebt ingevuld en volgt niet de stand van de hub, anders zou hij elke paar
+seconden veranderen en loopt je geschiedenis vol. Wat de boiler werkelijk doet
+staat in de sensor Stand. Instellen kan alleen met de automatische besturing
+uit; anders overschrijft de hub de waarde toch binnen enkele seconden.
 
 **Inloggegevens worden bewaard** in de configuratie van de integratie, zodat er
 na een herstart van de hub automatisch opnieuw kan worden ingelogd.
