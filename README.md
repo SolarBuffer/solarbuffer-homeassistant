@@ -71,10 +71,10 @@ bruikbaar in het energiedashboard.
 een nieuwe DHCP-lease, dan verschijnt het apparaat opnieuw. Een reservering in
 de router voorkomt dat.
 
-**Hubs ouder dan versie 0.7.4** kennen de endpoints nog niet die een gevraagde
-stand aannemen. De integratie valt dan terug op de omschakelaars van de
-webinterface. Alles werkt, maar tegelijk bedienen vanuit Home Assistant en
-vanaf de hub kan dan een onverwachte uitkomst geven.
+**Oudere hubs** kennen de endpoints nog niet die een gevraagde stand aannemen.
+De integratie valt dan terug op de omschakelaars van de webinterface. Alles
+werkt, maar tegelijk bedienen vanuit Home Assistant en vanaf de hub kan dan een
+onverwachte uitkomst geven. Werk de hub bij om dat te voorkomen.
 
 **Inloggegevens worden bewaard** in de configuratie van de integratie, zodat er
 na een herstart van de hub automatisch opnieuw kan worden ingelogd.
