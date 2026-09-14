@@ -1,12 +1,14 @@
 {
   "domain": "solarbuffer",
   "name": "SolarBuffer",
-  "codeowners": ["@SolarBuffer"],
+  "codeowners": [
+    "@SolarBuffer"
+  ],
   "config_flow": true,
   "documentation": "https://github.com/SolarBuffer/solarbuffer-homeassistant",
   "integration_type": "hub",
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/SolarBuffer/solarbuffer-homeassistant/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
