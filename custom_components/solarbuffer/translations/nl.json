@@ -1,0 +1,120 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Vul het adres van je SolarBuffer-hub in, plus een account dat op de webinterface kan inloggen.",
+        "data": {
+          "host": "Adres",
+          "port": "Poort",
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord"
+        }
+      },
+      "reauth_confirm": {
+        "description": "De hub weigert de opgeslagen gegevens. Vul ze opnieuw in.",
+        "data": {
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "De hub is niet bereikbaar op dat adres.",
+      "invalid_auth": "Gebruikersnaam of wachtwoord klopt niet."
+    },
+    "abort": {
+      "already_configured": "Deze hub is al ingesteld.",
+      "reauth_successful": "Opnieuw verbonden met de hub."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "net_power": {
+        "name": "Netvermogen"
+      },
+      "solar_power": {
+        "name": "Zonnevermogen"
+      },
+      "gas_today": {
+        "name": "Gas vandaag"
+      },
+      "energy_price": {
+        "name": "Stroomprijs"
+      },
+      "battery_soc": {
+        "name": "Laadstand accu"
+      },
+      "battery_power": {
+        "name": "Accuvermogen"
+      },
+      "battery_charged_today": {
+        "name": "Accu geladen vandaag"
+      },
+      "battery_discharged_today": {
+        "name": "Accu ontladen vandaag"
+      },
+      "device_power": {
+        "name": "Vermogen"
+      },
+      "device_energy_today": {
+        "name": "Energie vandaag"
+      },
+      "device_brightness": {
+        "name": "Stand"
+      },
+      "device_chip_temperature": {
+        "name": "Chiptemperatuur"
+      },
+      "accessory_power": {
+        "name": "Vermogen"
+      },
+      "accessory_energy_today": {
+        "name": "Energie vandaag"
+      },
+      "accessory_temperature": {
+        "name": "Temperatuur"
+      }
+    },
+    "switch": {
+      "regulation": {
+        "name": "Regeling"
+      },
+      "schedules": {
+        "name": "Tijdschema's"
+      },
+      "anti_legionella": {
+        "name": "Anti-legionella"
+      },
+      "vacation": {
+        "name": "Vakantiestand"
+      }
+    },
+    "button": {
+      "boost": {
+        "name": "Boost"
+      }
+    },
+    "select": {
+      "battery_mode": {
+        "name": "Accustand",
+        "state": {
+          "auto": "Automatisch",
+          "manual": "Handmatig",
+          "off": "Uit"
+        }
+      },
+      "battery_direction": {
+        "name": "Accurichting",
+        "state": {
+          "charge": "Laden",
+          "discharge": "Ontladen"
+        }
+      }
+    },
+    "number": {
+      "battery_manual_power": {
+        "name": "Handmatig accuvermogen"
+      }
+    }
+  }
+}

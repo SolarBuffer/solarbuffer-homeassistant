@@ -1,0 +1,120 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Enter the address of your SolarBuffer hub and an account that can log in to its web interface.",
+        "data": {
+          "host": "Host",
+          "port": "Port",
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "description": "The hub rejected the stored credentials. Enter them again.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Could not reach the hub at that address.",
+      "invalid_auth": "Username or password is incorrect."
+    },
+    "abort": {
+      "already_configured": "This hub is already set up.",
+      "reauth_successful": "Reconnected to the hub."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "net_power": {
+        "name": "Grid power"
+      },
+      "solar_power": {
+        "name": "Solar power"
+      },
+      "gas_today": {
+        "name": "Gas today"
+      },
+      "energy_price": {
+        "name": "Energy price"
+      },
+      "battery_soc": {
+        "name": "Battery level"
+      },
+      "battery_power": {
+        "name": "Battery power"
+      },
+      "battery_charged_today": {
+        "name": "Battery charged today"
+      },
+      "battery_discharged_today": {
+        "name": "Battery discharged today"
+      },
+      "device_power": {
+        "name": "Power"
+      },
+      "device_energy_today": {
+        "name": "Energy today"
+      },
+      "device_brightness": {
+        "name": "Output"
+      },
+      "device_chip_temperature": {
+        "name": "Chip temperature"
+      },
+      "accessory_power": {
+        "name": "Power"
+      },
+      "accessory_energy_today": {
+        "name": "Energy today"
+      },
+      "accessory_temperature": {
+        "name": "Temperature"
+      }
+    },
+    "switch": {
+      "regulation": {
+        "name": "Regulation"
+      },
+      "schedules": {
+        "name": "Schedules"
+      },
+      "anti_legionella": {
+        "name": "Anti-legionella"
+      },
+      "vacation": {
+        "name": "Vacation mode"
+      }
+    },
+    "button": {
+      "boost": {
+        "name": "Boost"
+      }
+    },
+    "select": {
+      "battery_mode": {
+        "name": "Battery mode",
+        "state": {
+          "auto": "Automatic",
+          "manual": "Manual",
+          "off": "Off"
+        }
+      },
+      "battery_direction": {
+        "name": "Battery direction",
+        "state": {
+          "charge": "Charge",
+          "discharge": "Discharge"
+        }
+      }
+    },
+    "number": {
+      "battery_manual_power": {
+        "name": "Manual battery power"
+      }
+    }
+  }
+}
