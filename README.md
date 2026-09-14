@@ -22,6 +22,12 @@ van je Home Assistant en herstart.
 
 ## Instellen
 
+Draait je hub op een recente versie, dan kondigt hij zichzelf aan op het
+netwerk en verschijnt hij vanzelf onder Ontdekt bij Apparaten en diensten. Je
+hoeft dan alleen je gebruikersnaam en wachtwoord in te vullen.
+
+Verschijnt hij niet, stel hem dan met de hand in:
+
 [![Open je Home Assistant en begin met het instellen van een nieuwe integratie.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=solarbuffer)
 
 | Veld | Waarde |
@@ -68,9 +74,11 @@ bruikbaar in het energiedashboard.
 
 ## Aandachtspunten
 
-**Apparaten worden herkend aan hun IP-adres.** Wijzigt dat, bijvoorbeeld door
-een nieuwe DHCP-lease, dan verschijnt het apparaat opnieuw. Een reservering in
-de router voorkomt dat.
+**De hub wordt herkend aan een vaste aanduiding**, niet aan zijn IP-adres, dus
+een nieuwe DHCP-lease is geen probleem: het adres wordt dan vanzelf bijgewerkt.
+Dat vraagt wel een hub die die aanduiding meestuurt. De losse SolarBuffers
+worden nog wel aan hun IP-adres herkend; een reservering in de router voorkomt
+dat ze na een adreswijziging opnieuw verschijnen.
 
 **Oudere hubs** kennen de endpoints nog niet die een gevraagde stand aannemen.
 De integratie valt dan terug op de omschakelaars van de webinterface. Alles

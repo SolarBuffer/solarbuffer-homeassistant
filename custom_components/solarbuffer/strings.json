@@ -19,6 +19,14 @@
           "username": "Username",
           "password": "Password"
         }
+      },
+      "discovery_confirm": {
+        "title": "SolarBuffer found",
+        "description": "A SolarBuffer hub was found at {host}. Enter an account that can log in to its web interface. Use an administrator account, otherwise the regulation, schedules, anti-legionella and vacation mode cannot be operated.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
       }
     },
     "error": {
@@ -28,7 +36,8 @@
     "abort": {
       "already_configured": "This hub is already set up.",
       "reauth_successful": "Reconnected to the hub."
-    }
+    },
+    "flow_title": "SolarBuffer ({host})"
   },
   "entity": {
     "sensor": {

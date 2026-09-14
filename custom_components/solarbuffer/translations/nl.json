@@ -19,6 +19,14 @@
           "username": "Gebruikersnaam",
           "password": "Wachtwoord"
         }
+      },
+      "discovery_confirm": {
+        "title": "SolarBuffer gevonden",
+        "description": "Er is een SolarBuffer-hub gevonden op {host}. Vul een account in dat op de webinterface kan inloggen. Gebruik een beheerdersaccount, anders zijn de regeling, tijdschema's, anti-legionella en de vakantiestand niet te bedienen.",
+        "data": {
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord"
+        }
       }
     },
     "error": {
@@ -28,7 +36,8 @@
     "abort": {
       "already_configured": "Deze hub is al ingesteld.",
       "reauth_successful": "Opnieuw verbonden met de hub."
-    }
+    },
+    "flow_title": "SolarBuffer ({host})"
   },
   "entity": {
     "sensor": {
