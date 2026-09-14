@@ -17,6 +17,7 @@ PLATFORMS: list[Platform] = [
     Platform.BUTTON,
     Platform.SELECT,
     Platform.NUMBER,
+    Platform.UPDATE,
 ]
 
 type SolarBufferConfigEntry = ConfigEntry[SolarBufferCoordinator]

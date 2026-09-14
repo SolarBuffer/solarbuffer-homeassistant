@@ -157,6 +157,19 @@ class SolarBufferClient:
             f"/api/device/{ip}/power", {"on": aan}, f"/toggle_shelly/{ip}"
         )
 
+    async def async_set_device_brightness(self, ip: str, stand: int) -> None:
+        """Zet een SolarBuffer op een vaste stand.
+
+        Blijft alleen staan met de automatische besturing uit; anders rekent de
+        hub binnen een paar seconden een nieuwe stand uit.
+        """
+        await self._request(
+            "POST", f"/set_brightness/{ip}", json_body={"brightness": stand}
+        )
+
+    async def async_run_update(self) -> None:
+        await self._request("POST", "/api/update")
+
     async def async_boost_device(self, ip: str) -> None:
         await self._request("POST", f"/boost/{ip}")
 

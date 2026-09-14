@@ -76,6 +76,12 @@
       },
       "accessory_temperature": {
         "name": "Temperature"
+      },
+      "system_status": {
+        "name": "Status"
+      },
+      "device_status": {
+        "name": "Status"
       }
     },
     "switch": {
@@ -117,6 +123,14 @@
     "number": {
       "battery_manual_power": {
         "name": "Manual battery power"
+      },
+      "device_setpoint": {
+        "name": "Manual output"
+      }
+    },
+    "update": {
+      "hub_update": {
+        "name": "Hub software"
       }
     }
   }

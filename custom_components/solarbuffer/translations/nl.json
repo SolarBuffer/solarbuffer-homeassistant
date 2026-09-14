@@ -76,6 +76,12 @@
       },
       "accessory_temperature": {
         "name": "Temperatuur"
+      },
+      "system_status": {
+        "name": "Status"
+      },
+      "device_status": {
+        "name": "Status"
       }
     },
     "switch": {
@@ -117,6 +123,14 @@
     "number": {
       "battery_manual_power": {
         "name": "Handmatig accuvermogen"
+      },
+      "device_setpoint": {
+        "name": "Handmatige stand"
+      }
+    },
+    "update": {
+      "hub_update": {
+        "name": "Hub-software"
       }
     }
   }

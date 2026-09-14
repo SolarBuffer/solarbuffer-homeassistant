@@ -24,6 +24,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
 from . import SolarBufferConfigEntry
+from .const import ruw_naar_zichtbaar
 from .coordinator import SolarBufferCoordinator
 from .entity import (
     SolarBufferAccessoryEntity,
@@ -53,6 +54,11 @@ HUB_SENSOREN: tuple[SolarBufferSensorDescription, ...] = (
         state_class=SensorStateClass.MEASUREMENT,
         native_unit_of_measurement=UnitOfPower.WATT,
         waarde=lambda d: d.get("power"),
+    ),
+    SolarBufferSensorDescription(
+        key="system_status",
+        translation_key="system_status",
+        waarde=lambda d: d.get("system_status"),
     ),
     SolarBufferSensorDescription(
         key="solar_power",
@@ -137,6 +143,7 @@ async def async_setup_entry(
         ip = apparaat.get("ip")
         if not ip:
             continue
+        entiteiten.append(SolarBufferDeviceStatus(coordinator, ip))
         entiteiten.append(SolarBufferDevicePower(coordinator, ip))
         entiteiten.append(SolarBufferDeviceEnergy(coordinator, ip))
         entiteiten.append(SolarBufferDeviceBrightness(coordinator, ip))
@@ -174,10 +181,22 @@ class SolarBufferHubSensor(SolarBufferEntity, SensorEntity):
         return self.entity_description.waarde(self.coordinator.data or {})
 
 
+class SolarBufferDeviceStatus(SolarBufferDeviceEntity, SensorEntity):
+    """De toestand van één SolarBuffer in één woord, zoals de hub die noemt."""
+
+    def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
+        super().__init__(coordinator, ip, "device_status")
+
+    @property
+    def native_value(self) -> Any:
+        return self._device.get("status")
+
+
 class SolarBufferDevicePower(SolarBufferDeviceEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.POWER
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = UnitOfPower.WATT
+    _attr_suggested_display_precision = 0
 
     def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
         super().__init__(coordinator, ip, "device_power")
@@ -191,6 +210,7 @@ class SolarBufferDeviceEnergy(SolarBufferDeviceEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ENERGY
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
     _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_suggested_display_precision = 2
 
     def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
         super().__init__(coordinator, ip, "device_energy_today")
@@ -201,15 +221,25 @@ class SolarBufferDeviceEnergy(SolarBufferDeviceEntity, SensorEntity):
 
 
 class SolarBufferDeviceBrightness(SolarBufferDeviceEntity, SensorEntity):
+    """De stand van de boiler, op dezelfde schaal als de webinterface toont.
+
+    De hub rekent intern met een waarde tussen 30 en 100 en met decimalen, want
+    dat is de uitkomst van de regelaar. Die decimalen bereiken de dimmer nooit,
+    dus ze horen ook niet in een weergave thuis.
+    """
+
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_suggested_display_precision = 0
 
     def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
         super().__init__(coordinator, ip, "device_brightness")
 
     @property
     def native_value(self) -> Any:
-        return self._device.get("brightness")
+        if not self._device.get("on"):
+            return 0
+        return ruw_naar_zichtbaar(self._device.get("brightness"))
 
 
 class SolarBufferDeviceChipTemp(SolarBufferDeviceEntity, SensorEntity):
@@ -217,6 +247,7 @@ class SolarBufferDeviceChipTemp(SolarBufferDeviceEntity, SensorEntity):
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
     _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_suggested_display_precision = 1
 
     def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
         super().__init__(coordinator, ip, "device_chip_temperature")
@@ -230,6 +261,7 @@ class SolarBufferAccessoryPower(SolarBufferAccessoryEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.POWER
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = UnitOfPower.WATT
+    _attr_suggested_display_precision = 0
 
     def __init__(self, coordinator: SolarBufferCoordinator, acc_id: str) -> None:
         super().__init__(coordinator, acc_id, "accessory_power")
@@ -243,6 +275,7 @@ class SolarBufferAccessoryEnergy(SolarBufferAccessoryEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.ENERGY
     _attr_state_class = SensorStateClass.TOTAL_INCREASING
     _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_suggested_display_precision = 2
 
     def __init__(self, coordinator: SolarBufferCoordinator, acc_id: str) -> None:
         super().__init__(coordinator, acc_id, "accessory_energy_today")
@@ -256,6 +289,7 @@ class SolarBufferAccessoryTemperature(SolarBufferAccessoryEntity, SensorEntity):
     _attr_device_class = SensorDeviceClass.TEMPERATURE
     _attr_state_class = SensorStateClass.MEASUREMENT
     _attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
+    _attr_suggested_display_precision = 1
 
     def __init__(self, coordinator: SolarBufferCoordinator, acc_id: str) -> None:
         super().__init__(coordinator, acc_id, "accessory_temperature")
