@@ -34,12 +34,12 @@ async def async_setup_entry(
     async_add_entities(entiteiten)
 
 
-class _ToggleSwitch(SolarBufferEntity, SwitchEntity):
-    """Basis voor de schakelaars die de hub als 'omschakelen' aanbiedt.
+class _StandSwitch(SolarBufferEntity, SwitchEntity):
+    """Basis voor de schakelaars die een gevraagde stand naar de hub sturen.
 
-    De hub heeft geen 'zet aan' en 'zet uit', alleen een omschakel-endpoint.
-    We kijken daarom eerst naar de huidige stand en schakelen alleen als die
-    afwijkt, anders zou aanzetten van iets dat al aan staat het juist uitzetten.
+    We schakelen alleen als de stand werkelijk afwijkt. Dat scheelt niet alleen
+    verkeer, het is ook wat een oudere hub nodig heeft: die kent alleen een
+    omschakelaar, en daar valt de client op terug.
     """
 
     _veld: str
@@ -48,51 +48,51 @@ class _ToggleSwitch(SolarBufferEntity, SwitchEntity):
     def is_on(self) -> bool:
         return bool((self.coordinator.data or {}).get(self._veld))
 
-    async def _async_toggle(self) -> None:
+    async def _async_zet(self, aan: bool) -> None:
         raise NotImplementedError
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         if not self.is_on:
-            await self._async_toggle()
+            await self._async_zet(True)
             await self.coordinator.async_refresh_soon()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         if self.is_on:
-            await self._async_toggle()
+            await self._async_zet(False)
             await self.coordinator.async_refresh_soon()
 
 
-class SolarBufferRegulationSwitch(_ToggleSwitch):
+class SolarBufferRegulationSwitch(_StandSwitch):
     _veld = "enabled"
     _attr_icon = "mdi:solar-power"
 
     def __init__(self, coordinator: SolarBufferCoordinator) -> None:
         super().__init__(coordinator, "regulation")
 
-    async def _async_toggle(self) -> None:
-        await self.coordinator.client.async_toggle_regulation()
+    async def _async_zet(self, aan: bool) -> None:
+        await self.coordinator.client.async_set_regulation(aan)
 
 
-class SolarBufferSchedulesSwitch(_ToggleSwitch):
+class SolarBufferSchedulesSwitch(_StandSwitch):
     _veld = "schedules_enabled"
     _attr_icon = "mdi:calendar-clock"
 
     def __init__(self, coordinator: SolarBufferCoordinator) -> None:
         super().__init__(coordinator, "schedules")
 
-    async def _async_toggle(self) -> None:
-        await self.coordinator.client.async_toggle_schedules()
+    async def _async_zet(self, aan: bool) -> None:
+        await self.coordinator.client.async_set_schedules(aan)
 
 
-class SolarBufferLegionellaSwitch(_ToggleSwitch):
+class SolarBufferLegionellaSwitch(_StandSwitch):
     _veld = "anti_legionella_enabled"
     _attr_icon = "mdi:water-boiler"
 
     def __init__(self, coordinator: SolarBufferCoordinator) -> None:
         super().__init__(coordinator, "anti_legionella")
 
-    async def _async_toggle(self) -> None:
-        await self.coordinator.client.async_toggle_anti_legionella()
+    async def _async_zet(self, aan: bool) -> None:
+        await self.coordinator.client.async_set_anti_legionella(aan)
 
 
 class SolarBufferVacationSwitch(SolarBufferEntity, SwitchEntity):
@@ -143,14 +143,14 @@ class SolarBufferDeviceSwitch(SolarBufferDeviceEntity, SwitchEntity):
             "boost_until": d.get("boost_until"),
         }
 
-    async def _async_toggle(self) -> None:
-        await self.coordinator.client.async_toggle_device(self._ip)
+    async def _async_zet(self, aan: bool) -> None:
+        await self.coordinator.client.async_set_device_power(self._ip, aan)
         await self.coordinator.async_refresh_soon()
 
     async def async_turn_on(self, **kwargs: Any) -> None:
         if not self.is_on:
-            await self._async_toggle()
+            await self._async_zet(True)
 
     async def async_turn_off(self, **kwargs: Any) -> None:
         if self.is_on:
-            await self._async_toggle()
+            await self._async_zet(False)

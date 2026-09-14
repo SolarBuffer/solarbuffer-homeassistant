@@ -1,74 +1,80 @@
 # SolarBuffer voor Home Assistant
 
-Koppelt je SolarBuffer-hub rechtstreeks aan Home Assistant. Geen MQTT-broker
-nodig: de integratie praat lokaal met de REST-API die de hub zelf al heeft.
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz)
+[![Release](https://img.shields.io/github/v/release/SolarBuffer/solarbuffer-homeassistant)](https://github.com/SolarBuffer/solarbuffer-homeassistant/releases)
 
-## Wat je krijgt
+Koppelt je SolarBuffer-hub aan Home Assistant. De integratie praat lokaal met de
+REST-API van de hub. Er is geen MQTT-broker nodig en er gaat niets via internet.
 
-**Sensoren**
+## Installatie
 
-| | |
+[![Open je Home Assistant en voeg deze repository toe aan HACS.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=SolarBuffer&repository=solarbuffer-homeassistant&category=integration)
+
+Klik op de knop hierboven, kies Download en herstart Home Assistant.
+
+<details>
+<summary>Handmatig, zonder HACS</summary>
+
+Kopieer de map `custom_components/solarbuffer` naar de map `custom_components`
+van je Home Assistant en herstart.
+
+</details>
+
+## Instellen
+
+[![Open je Home Assistant en begin met het instellen van een nieuwe integratie.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=solarbuffer)
+
+| Veld | Waarde |
 |---|---|
-| Netvermogen | live vermogen van de P1-meter |
-| Zonnevermogen | alleen bij een gekoppelde omvormer |
-| Laadstand, vermogen, geladen en ontladen | bij een gekoppelde accu |
-| Gas vandaag | alleen als gas aanstaat |
-| Stroomprijs | alleen bij dynamische tarieven |
-| Per SolarBuffer | vermogen, energie vandaag, stand en chiptemperatuur |
-| Per verbruiker | vermogen en energie vandaag |
-| Per temperatuursensor | temperatuur |
+| Adres | `solarbuffer.local`, of het IP-adres als mDNS niet werkt |
+| Poort | `5001` |
+| Gebruikersnaam en wachtwoord | Je inlog van de SolarBuffer-webinterface |
 
-De kWh-sensoren hebben `state_class: total_increasing`, dus je kunt ze
-rechtstreeks in het energiedashboard van Home Assistant gebruiken.
+Gebruik een beheerdersaccount. De regeling, tijdschema's, anti-legionella en de
+vakantiestand zijn met een kijkersaccount niet te bedienen.
 
-**Bediening**
+## Entiteiten
 
-- Regeling aan of uit
-- Tijdschema's aan of uit
-- Anti-legionella aan of uit
-- Vakantiestand
-- Elke SolarBuffer handmatig aan of uit
-- Boost per SolarBuffer
-- Accustand (automatisch, handmatig, uit), richting en vermogen, bij een
-  gekoppelde Zendure
+### Sensoren
 
-## Installeren
+| Entiteit | Voorwaarde |
+|---|---|
+| Netvermogen | |
+| Zonnevermogen | omvormer gekoppeld |
+| Gas vandaag | gas ingeschakeld |
+| Stroomprijs | dynamische tarieven ingeschakeld |
+| Laadstand, vermogen, geladen en ontladen van de accu | accu gekoppeld |
+| Vermogen, energie vandaag, stand en chiptemperatuur | per SolarBuffer |
+| Vermogen en energie vandaag | per verbruiker |
+| Temperatuur | per temperatuursensor |
 
-Via HACS: voeg deze repository toe als custom repository van het type
-Integration, installeer SolarBuffer en herstart Home Assistant.
+De kWh-sensoren hebben `state_class: total_increasing` en zijn dus direct
+bruikbaar in het energiedashboard.
 
-Handmatig: kopieer `custom_components/solarbuffer` naar de map
-`custom_components` van je Home Assistant en herstart.
+### Bediening
 
-Daarna: Instellingen → Apparaten en diensten → Integratie toevoegen →
-SolarBuffer. Vul het adres van je hub in (standaard poort 5001) en een account
-dat op de webinterface kan inloggen.
+| Entiteit | Type | Voorwaarde |
+|---|---|---|
+| Regeling | schakelaar | |
+| Tijdschema's | schakelaar | |
+| Anti-legionella | schakelaar | |
+| Vakantiestand | schakelaar | |
+| Aan of uit per SolarBuffer | schakelaar | |
+| Boost | knop, per SolarBuffer | |
+| Accustand: automatisch, handmatig of uit | keuzelijst | Zendure gekoppeld |
+| Accurichting: laden of ontladen | keuzelijst | Zendure gekoppeld |
+| Handmatig accuvermogen | getal | Zendure gekoppeld |
 
-## Goed om te weten
+## Aandachtspunten
 
-**Beheerdersrechten.** De regeling, tijdschema's, anti-legionella en de
-vakantiestand vragen een beheerdersaccount op de hub. Met een kijkersaccount
-werken de sensoren wel, maar geven die schakelaars een foutmelding.
+**Apparaten worden herkend aan hun IP-adres.** Wijzigt dat, bijvoorbeeld door
+een nieuwe DHCP-lease, dan verschijnt het apparaat opnieuw. Een reservering in
+de router voorkomt dat.
 
-**Aan- en uitzetten is omschakelen.** De hub kent voor een aantal functies
-alleen een omschakel-endpoint en geen losse aan en uit. De integratie kijkt
-daarom eerst naar de huidige stand en schakelt alleen als die afwijkt. Druk je
-in Home Assistant en op de hub tegelijk, dan kan de uitkomst afwijken van wat
-je verwacht.
+**Hubs ouder dan versie 0.7.4** kennen de endpoints nog niet die een gevraagde
+stand aannemen. De integratie valt dan terug op de omschakelaars van de
+webinterface. Alles werkt, maar tegelijk bedienen vanuit Home Assistant en
+vanaf de hub kan dan een onverwachte uitkomst geven.
 
-**Opnieuw inloggen na een herstart van de hub.** De hub bewaart API-tokens
-alleen in het geheugen. Na een herstart is elk token ongeldig; de integratie
-merkt dat aan een 401 en logt automatisch opnieuw in. Daarom worden je
-gebruikersnaam en wachtwoord in de config entry bewaard.
-
-**Apparaten worden op IP herkend.** Wijzigt het IP-adres van een SolarBuffer,
-bijvoorbeeld door een nieuwe DHCP-lease, dan verschijnt hij als nieuw apparaat.
-Een vaste lease of een reservering in je router voorkomt dat.
-
-## Wat er nog niet in zit
-
-- Binaire sensoren voor bereikbaarheid van de hub, P1 en accu
-- Maandtotalen uit `/api/monthly`
-- Het instellen van tijdschema's
-- Langlevende tokens, zodat gebruikersnaam en wachtwoord niet bewaard hoeven
-  te worden. Dat vraagt een wijziging aan de hub zelf.
+**Inloggegevens worden bewaard** in de configuratie van de integratie, zodat er
+na een herstart van de hub automatisch opnieuw kan worden ingelogd.

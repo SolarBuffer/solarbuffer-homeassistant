@@ -21,6 +21,10 @@ class SolarBufferAuthError(SolarBufferError):
     """Gebruikersnaam of wachtwoord klopt niet."""
 
 
+class SolarBufferNotFound(SolarBufferError):
+    """De hub kent dit endpoint niet, of het gevraagde apparaat bestaat niet."""
+
+
 class SolarBufferClient:
     """Kleine client rond de endpoints die de hub al heeft.
 
@@ -100,6 +104,8 @@ class SolarBufferClient:
                     )
                 if resp.status == 401:
                     raise SolarBufferAuthError("Token geweigerd na opnieuw inloggen")
+                if resp.status == 404:
+                    raise SolarBufferNotFound(path)
                 if resp.status == 403:
                     raise SolarBufferError(
                         f"Geen rechten voor {path}; deze actie vraagt een beheerdersaccount"
@@ -122,17 +128,34 @@ class SolarBufferClient:
 
     # --- schakelen -------------------------------------------------------
 
-    async def async_toggle_regulation(self) -> None:
-        await self._request("GET", "/toggle_pid")
+    async def _zet(self, pad: str, body: dict[str, Any], omschakelpad: str) -> None:
+        """Zet een stand, en val terug op omschakelen bij een oudere hub.
 
-    async def async_toggle_schedules(self) -> None:
-        await self._request("GET", "/toggle_schedules")
+        Nieuwere hubs hebben endpoints die een gevraagde stand aannemen. Kent de
+        hub die nog niet, dan is er alleen een omschakelaar; die gebruiken we dan
+        alsnog. De aanroeper heeft in dat geval al vastgesteld dat de stand
+        werkelijk moet wijzigen.
+        """
+        try:
+            await self._request("POST", pad, json_body=body)
+        except SolarBufferNotFound:
+            await self._request("GET", omschakelpad)
 
-    async def async_toggle_anti_legionella(self) -> None:
-        await self._request("GET", "/toggle_anti_legionella")
+    async def async_set_regulation(self, aan: bool) -> None:
+        await self._zet("/api/regulation", {"enabled": aan}, "/toggle_pid")
 
-    async def async_toggle_device(self, ip: str) -> None:
-        await self._request("GET", f"/toggle_shelly/{ip}")
+    async def async_set_schedules(self, aan: bool) -> None:
+        await self._zet("/api/schedules", {"enabled": aan}, "/toggle_schedules")
+
+    async def async_set_anti_legionella(self, aan: bool) -> None:
+        await self._zet(
+            "/api/anti_legionella", {"enabled": aan}, "/toggle_anti_legionella"
+        )
+
+    async def async_set_device_power(self, ip: str, aan: bool) -> None:
+        await self._zet(
+            f"/api/device/{ip}/power", {"on": aan}, f"/toggle_shelly/{ip}"
+        )
 
     async def async_boost_device(self, ip: str) -> None:
         await self._request("POST", f"/boost/{ip}")
