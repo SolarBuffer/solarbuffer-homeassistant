@@ -6,6 +6,11 @@ from datetime import timedelta
 
 DOMAIN = "solarbuffer"
 
+# De hub heet standaard "SolarBuffer", dus die naam is via mDNS te bereiken
+# zonder dat je het IP hoeft op te zoeken. Werkt alleen als de machine waarop
+# Home Assistant draait mDNS kan opzoeken; Home Assistant OS kan dat, een kale
+# Docker-container vaak niet. Vandaar dat het veld gewoon aanpasbaar blijft.
+DEFAULT_HOST = "solarbuffer.local"
 DEFAULT_PORT = 5001
 DEFAULT_SCAN_INTERVAL = timedelta(seconds=5)
 

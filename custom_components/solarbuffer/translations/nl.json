@@ -8,6 +8,9 @@
           "port": "Poort",
           "username": "Gebruikersnaam",
           "password": "Wachtwoord"
+        },
+        "data_description": {
+          "host": "Adres van je SolarBuffer-hub. De standaardnaam werkt als je Home Assistant mDNS kan opzoeken; lukt dat niet, vul dan het IP-adres in."
         }
       },
       "reauth_confirm": {

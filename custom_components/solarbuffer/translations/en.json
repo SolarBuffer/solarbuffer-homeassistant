@@ -8,6 +8,9 @@
           "port": "Port",
           "username": "Username",
           "password": "Password"
+        },
+        "data_description": {
+          "host": "Address of your SolarBuffer hub. The default name works if your Home Assistant can resolve mDNS; otherwise enter the IP address."
         }
       },
       "reauth_confirm": {

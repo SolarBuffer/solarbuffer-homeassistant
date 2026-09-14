@@ -11,11 +11,11 @@ from homeassistant.const import CONF_HOST, CONF_PASSWORD, CONF_PORT, CONF_USERNA
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import SolarBufferAuthError, SolarBufferClient, SolarBufferError
-from .const import DEFAULT_PORT, DOMAIN
+from .const import DEFAULT_HOST, DEFAULT_PORT, DOMAIN
 
 SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_HOST): str,
+        vol.Required(CONF_HOST, default=DEFAULT_HOST): str,
         vol.Optional(CONF_PORT, default=DEFAULT_PORT): int,
         vol.Required(CONF_USERNAME): str,
         vol.Required(CONF_PASSWORD): str,
