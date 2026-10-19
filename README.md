@@ -41,28 +41,49 @@ vakantiestand zijn met een kijkersaccount niet te bedienen.
 
 ## Entiteiten
 
-### Sensoren
+### Sensoren van de hub
 
-| Entiteit | Voorwaarde |
-|---|---|
-| Netvermogen | |
-| Zonnevermogen | omvormer gekoppeld |
-| Gas vandaag | gas ingeschakeld |
-| Stroomprijs | dynamische tarieven ingeschakeld |
-| Laadstand, vermogen, geladen en ontladen van de accu | accu gekoppeld |
-| Vermogen, energie vandaag, stand en chiptemperatuur | per SolarBuffer |
-| Warmtevoorraad, inhoud van het vat en vat gevuld | per SolarBuffer, hub 0.8.1 of nieuwer |
-| Nog te gaan tot het vat vol is | per SolarBuffer, hub 0.8.1 of nieuwer |
-| Legionellaronde gestart | per SolarBuffer |
-| Vermogen en energie vandaag | per verbruiker |
-| Temperatuur | per temperatuursensor |
+| Entiteit | Eenheid | Voorwaarde |
+|---|---|---|
+| Netvermogen | W | |
+| Status | tekst | |
+| Zonnevermogen | W | omvormer gekoppeld |
+| Gas vandaag | m³ | gas ingeschakeld |
+| Stroomprijs | ct/kWh | dynamische tarieven ingeschakeld |
+| Laadstand accu | % | accu gekoppeld |
+| Accuvermogen | W | accu gekoppeld |
+| Accu geladen vandaag | kWh | accu gekoppeld |
+| Accu ontladen vandaag | kWh | accu gekoppeld |
+
+### Sensoren per SolarBuffer
+
+| Entiteit | Eenheid | Voorwaarde |
+|---|---|---|
+| Status | tekst | |
+| Vermogen | W | |
+| Energie vandaag | kWh | |
+| Stand | % | |
+| Chiptemperatuur | °C | als de dimmer die meldt |
+| Warmtevoorraad | kWh | hub 0.8.1 of nieuwer |
+| Inhoud van het vat | kWh | hub 0.8.1 of nieuwer |
+| Vat gevuld | % | hub 0.8.1 of nieuwer |
+| Nog te gaan | minuten | hub 0.8.1 of nieuwer |
+| Legionellaronde gestart | tijdstip | |
+
+### Sensoren per verbruiker
+
+| Entiteit | Eenheid | Voorwaarde |
+|---|---|---|
+| Vermogen | W | |
+| Energie vandaag | kWh | |
+| Temperatuur | °C | per temperatuursensor |
 
 ### Binaire sensoren
 
-| Entiteit | Voorwaarde |
-|---|---|
-| Legionellaronde loopt | per SolarBuffer |
-| Legionellaronde nodig | per SolarBuffer |
+| Entiteit | Eenheid | Voorwaarde |
+|---|---|---|
+| Legionellaronde | aan of uit | per SolarBuffer |
+| Legionellaronde nodig | aan of uit | per SolarBuffer |
 
 De sensoren voor energie per dag hebben `state_class: total_increasing` en zijn
 dus direct bruikbaar in het energiedashboard. De warmtevoorraad hoort daar
@@ -70,6 +91,9 @@ nadrukkelijk niet bij: die stand loopt op tijdens verwarmen en zakt terug zodra
 de boiler uit staat, dus hij is `measurement`. Als oplopende teller zou Home
 Assistant elke daling als een meterreset zien en het verschil als verbruik
 optellen.
+
+Stand is de dimstand op dezelfde schaal als de webinterface toont, dus 0 tot 100
+en niet de ruwe 30 tot 100 waar de hub intern mee rekent.
 
 "Nog te gaan" is geen vaste looptijd maar wat er nog in moet gedeeld door wat er
 op dat moment in gaat. Die waarde beweegt dus mee met de zon, en blijft leeg als
