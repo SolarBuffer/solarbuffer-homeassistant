@@ -51,11 +51,29 @@ vakantiestand zijn met een kijkersaccount niet te bedienen.
 | Stroomprijs | dynamische tarieven ingeschakeld |
 | Laadstand, vermogen, geladen en ontladen van de accu | accu gekoppeld |
 | Vermogen, energie vandaag, stand en chiptemperatuur | per SolarBuffer |
+| Warmtevoorraad, inhoud van het vat en vat gevuld | per SolarBuffer, hub 0.8.1 of nieuwer |
+| Nog te gaan tot het vat vol is | per SolarBuffer, hub 0.8.1 of nieuwer |
+| Legionellaronde gestart | per SolarBuffer |
 | Vermogen en energie vandaag | per verbruiker |
 | Temperatuur | per temperatuursensor |
 
-De kWh-sensoren hebben `state_class: total_increasing` en zijn dus direct
-bruikbaar in het energiedashboard.
+### Binaire sensoren
+
+| Entiteit | Voorwaarde |
+|---|---|
+| Legionellaronde loopt | per SolarBuffer |
+| Legionellaronde nodig | per SolarBuffer |
+
+De sensoren voor energie per dag hebben `state_class: total_increasing` en zijn
+dus direct bruikbaar in het energiedashboard. De warmtevoorraad hoort daar
+nadrukkelijk niet bij: die stand loopt op tijdens verwarmen en zakt terug zodra
+de boiler uit staat, dus hij is `measurement`. Als oplopende teller zou Home
+Assistant elke daling als een meterreset zien en het verschil als verbruik
+optellen.
+
+"Nog te gaan" is geen vaste looptijd maar wat er nog in moet gedeeld door wat er
+op dat moment in gaat. Die waarde beweegt dus mee met de zon, en blijft leeg als
+er niets in gaat, bijvoorbeeld omdat de thermostaat heeft afgeslagen.
 
 ### Bediening
 
@@ -73,6 +91,11 @@ bruikbaar in het energiedashboard.
 | Handmatig accuvermogen | invulveld | Zendure gekoppeld |
 
 ## Aandachtspunten
+
+Draait je hub een versie ouder dan 0.8.1, dan levert die de warmtevoorraad niet
+en worden die entiteiten niet aangemaakt. Dat is bewust: liever geen entiteit dan
+een die voor altijd op niet beschikbaar staat. Werk je de hub later bij, herlaad
+dan de integratie of herstart Home Assistant, dan verschijnen ze alsnog.
 
 **De hub wordt herkend aan een vaste aanduiding**, niet aan zijn IP-adres, dus
 een nieuwe DHCP-lease is geen probleem: het adres wordt dan vanzelf bijgewerkt.
