@@ -18,10 +18,12 @@ from homeassistant.const import (
     UnitOfEnergy,
     UnitOfPower,
     UnitOfTemperature,
+    UnitOfTime,
     UnitOfVolume,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
+from homeassistant.util import dt as dt_util
 
 from . import SolarBufferConfigEntry
 from .const import ruw_naar_zichtbaar
@@ -149,6 +151,16 @@ async def async_setup_entry(
         entiteiten.append(SolarBufferDeviceBrightness(coordinator, ip))
         if apparaat.get("chip_temp") is not None:
             entiteiten.append(SolarBufferDeviceChipTemp(coordinator, ip))
+        # De warmtevoorraad bestaat pas vanaf hubversie 0.8.1. Op een oudere hub
+        # ontbreken deze velden, en dan maken we de entiteiten niet aan in plaats
+        # van ze voor altijd op niet beschikbaar te laten staan.
+        if apparaat.get("warmte_vol_kwh") is not None:
+            entiteiten.append(SolarBufferDeviceHeatStored(coordinator, ip))
+            entiteiten.append(SolarBufferDeviceHeatCapacity(coordinator, ip))
+            entiteiten.append(SolarBufferDeviceHeatLevel(coordinator, ip))
+            entiteiten.append(SolarBufferDeviceHeatEta(coordinator, ip))
+        if "legionella_start" in apparaat:
+            entiteiten.append(SolarBufferDeviceLegionellaStart(coordinator, ip))
 
     for acc in coordinator.accessories:
         acc_id = acc.get("id")
@@ -255,6 +267,110 @@ class SolarBufferDeviceChipTemp(SolarBufferDeviceEntity, SensorEntity):
     @property
     def native_value(self) -> Any:
         return self._device.get("chip_temp")
+
+
+class SolarBufferDeviceHeatStored(SolarBufferDeviceEntity, SensorEntity):
+    """Hoeveel energie er volgens de hub in het vat zit.
+
+    Geen oplopende teller maar een momentopname: de stand loopt op tijdens
+    verwarmen en zakt terug zodra de boiler uit staat, dus MEASUREMENT en niet
+    TOTAL_INCREASING. Anders zou Home Assistant elke daling als een meterreset
+    zien en het verschil als verbruik optellen.
+    """
+
+    _attr_device_class = SensorDeviceClass.ENERGY_STORAGE
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_suggested_display_precision = 2
+
+    def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
+        super().__init__(coordinator, ip, "heat_stored")
+
+    @property
+    def native_value(self) -> Any:
+        return self._device.get("warmte_kwh")
+
+
+class SolarBufferDeviceHeatCapacity(SolarBufferDeviceEntity, SensorEntity):
+    """Hoeveel energie er in dit vat past, uit de inhoud en de opwarming."""
+
+    _attr_device_class = SensorDeviceClass.ENERGY_STORAGE
+    _attr_native_unit_of_measurement = UnitOfEnergy.KILO_WATT_HOUR
+    _attr_suggested_display_precision = 2
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
+        super().__init__(coordinator, ip, "heat_capacity")
+
+    @property
+    def native_value(self) -> Any:
+        return self._device.get("warmte_vol_kwh")
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        return {
+            "boiler_volume_l": self._device.get("boiler_volume"),
+            "element_power_w": self._device.get("element_power_w"),
+        }
+
+
+class SolarBufferDeviceHeatLevel(SolarBufferDeviceEntity, SensorEntity):
+    """De warmtevoorraad als percentage van wat er in het vat past."""
+
+    _attr_state_class = SensorStateClass.MEASUREMENT
+    _attr_native_unit_of_measurement = PERCENTAGE
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
+        super().__init__(coordinator, ip, "heat_level")
+
+    @property
+    def native_value(self) -> Any:
+        vol = self._device.get("warmte_vol_kwh")
+        stand = self._device.get("warmte_kwh")
+        if not vol or stand is None:
+            return None
+        return max(0.0, min(100.0, float(stand) / float(vol) * 100))
+
+
+class SolarBufferDeviceHeatEta(SolarBufferDeviceEntity, SensorEntity):
+    """Hoelang het op het vermogen van nu nog duurt tot het vat vol is.
+
+    De hub rekent dit uit wat er nog in moet gedeeld door wat er op dat moment
+    in gaat, dus de waarde beweegt mee met de zon. Gaat er niets in, dan geeft
+    de hub niets terug en blijft deze sensor leeg.
+    """
+
+    _attr_device_class = SensorDeviceClass.DURATION
+    _attr_native_unit_of_measurement = UnitOfTime.MINUTES
+    _attr_suggested_display_precision = 0
+
+    def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
+        super().__init__(coordinator, ip, "heat_eta")
+
+    @property
+    def native_value(self) -> Any:
+        seconden = self._device.get("warmte_eta_s")
+        if seconden is None:
+            return None
+        return round(float(seconden) / 60, 1)
+
+
+class SolarBufferDeviceLegionellaStart(SolarBufferDeviceEntity, SensorEntity):
+    """Wanneer de lopende legionellaronde is begonnen; leeg als er geen loopt."""
+
+    _attr_device_class = SensorDeviceClass.TIMESTAMP
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
+
+    def __init__(self, coordinator: SolarBufferCoordinator, ip: str) -> None:
+        super().__init__(coordinator, ip, "legionella_start")
+
+    @property
+    def native_value(self) -> Any:
+        start = self._device.get("legionella_start")
+        if not start:
+            return None
+        return dt_util.utc_from_timestamp(float(start))
 
 
 class SolarBufferAccessoryPower(SolarBufferAccessoryEntity, SensorEntity):

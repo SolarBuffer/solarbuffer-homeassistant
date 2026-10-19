@@ -91,6 +91,21 @@
       },
       "device_status": {
         "name": "Status"
+      },
+      "heat_stored": {
+        "name": "Heat stored"
+      },
+      "heat_capacity": {
+        "name": "Tank capacity"
+      },
+      "heat_level": {
+        "name": "Tank filled"
+      },
+      "heat_eta": {
+        "name": "Time until full"
+      },
+      "legionella_start": {
+        "name": "Legionella run started"
       }
     },
     "switch": {
@@ -140,6 +155,14 @@
     "update": {
       "hub_update": {
         "name": "Hub software"
+      }
+    },
+    "binary_sensor": {
+      "legionella_active": {
+        "name": "Legionella run"
+      },
+      "legionella_required": {
+        "name": "Legionella run needed"
       }
     }
   },

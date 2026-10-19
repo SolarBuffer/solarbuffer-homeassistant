@@ -91,6 +91,21 @@
       },
       "device_status": {
         "name": "Status"
+      },
+      "heat_stored": {
+        "name": "Warmtevoorraad"
+      },
+      "heat_capacity": {
+        "name": "Inhoud van het vat"
+      },
+      "heat_level": {
+        "name": "Vat gevuld"
+      },
+      "heat_eta": {
+        "name": "Nog te gaan"
+      },
+      "legionella_start": {
+        "name": "Legionellaronde gestart"
       }
     },
     "switch": {
@@ -140,6 +155,14 @@
     "update": {
       "hub_update": {
         "name": "Hub-software"
+      }
+    },
+    "binary_sensor": {
+      "legionella_active": {
+        "name": "Legionellaronde"
+      },
+      "legionella_required": {
+        "name": "Legionellaronde nodig"
       }
     }
   },

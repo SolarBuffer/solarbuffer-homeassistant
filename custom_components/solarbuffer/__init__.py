@@ -12,6 +12,7 @@ from .api import SolarBufferAuthError, SolarBufferClient, SolarBufferError
 from .coordinator import SolarBufferCoordinator
 
 PLATFORMS: list[Platform] = [
+    Platform.BINARY_SENSOR,
     Platform.SENSOR,
     Platform.SWITCH,
     Platform.BUTTON,
